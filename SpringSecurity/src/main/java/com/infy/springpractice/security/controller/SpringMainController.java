@@ -9,4 +9,12 @@ public class SpringMainController {
 	public String getMessage() {
 		return "Hello Spring Security";
 	}
+	@RequestMapping("/user")
+	public String getUser() {
+		return "Welcome User";
+	}
+	@RequestMapping("/admin")
+	public String getAdmin() {
+		return "Welcome Admin";
+	}
 }
