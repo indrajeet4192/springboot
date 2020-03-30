@@ -8,12 +8,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@EnableWebSecurity
+//@EnableWebSecurity 
 public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.inMemoryAuthentication().withUser("user").password("password").roles("USER").and().withUser("admin")
-		.password("password").roles("ADMIN");
+				.password("password").roles("ADMIN");
 	}
 
 	@Bean
@@ -21,18 +21,11 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return NoOpPasswordEncoder.getInstance();
 	}
 
-	// adding authorization as per Request	
+	// adding authorization as per Request
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
-		.antMatchers("/admin")
-		.hasRole("ADMIN")
-		.antMatchers("/user")
-		//.hasRole("USER") adding to allow ADMIN in user as well
-		.hasAnyRole("USER","ADMIN")
-		.antMatchers("/")
-		.permitAll()
-		.and()
-		.formLogin();
+		http.authorizeRequests().antMatchers("/admin").hasRole("ADMIN").antMatchers("/user")
+				// .hasRole("USER") adding to allow ADMIN in user as well
+				.hasAnyRole("USER", "ADMIN").antMatchers("/").permitAll().and().formLogin();
 	}
 }
