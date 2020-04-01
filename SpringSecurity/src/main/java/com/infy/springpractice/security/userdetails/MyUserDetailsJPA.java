@@ -2,6 +2,9 @@ package com.infy.springpractice.security.userdetails;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,22 +12,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class MyUserDetailsJPA implements UserDetails {
 	private String username;
+	private String password;
+	private boolean active;
+	private List <GrantedAuthority> authorities;
 
-	public MyUserDetailsJPA(String username) {
-		this.username = username;
-	}
-
-	public MyUserDetailsJPA() {
+	public MyUserDetailsJPA(UserJPA user) {
+		this.username = user.getUsername();
+		this.password = user.getPassword();
+		this.active = user.getActive();
+		System.out.println("User Roles: "+user.getRoles());
+		this.authorities = Arrays.stream(user.getRoles().split(","))
+				.map(SimpleGrantedAuthority::new)
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+		return this.authorities;
 	}
 
 	@Override
 	public String getPassword() {
-		return "jpapass";
+		return this.password;
 	}
 
 	@Override
@@ -34,22 +43,22 @@ public class MyUserDetailsJPA implements UserDetails {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return true;
+		return this.active;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return this.active;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		return true;
+		return this.active;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return this.active;
 	}
 
 }
